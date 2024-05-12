@@ -20,3 +20,5 @@ func sum(a, b int) (int, error) {
 
 	return a + b, nil
 }
+
+// O retorno de uma função pode ser um valor e um erro, assim é possível retornar um erro caso algo de errado aconteça

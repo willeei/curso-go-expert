@@ -5,11 +5,11 @@ const a = "Hello World!"
 type ID int
 
 var (
-	b bool    = true
-	c int     = 10
-	d string  = "Williams"
-	e float64 = 1.2
-	f ID      = 1
+	b    = true
+	c    = 10
+	d    = "Williams"
+	e    = 1.2
+	f ID = 1
 )
 
 func main() {
