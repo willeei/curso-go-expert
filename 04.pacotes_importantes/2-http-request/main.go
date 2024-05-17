@@ -14,6 +14,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer resp.Body.Close()
 	println(string(res))
+	resp.Body.Close()
 }
