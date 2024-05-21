@@ -5,11 +5,10 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"time"
 )
 
 func main() {
-	c := http.Client{Timeout: time.Second}
+	c := http.Client{}
 	jsonVar := bytes.NewBuffer([]byte(`{"name":"Williams"}`))
 	resp, err := c.Post("http://google.com", "application/json", jsonVar)
 	if err != nil {
