@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: db_mysql
+    restart: always
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: goexpert
+      MYSQL_USER: test
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data:/var/lib/mysql
