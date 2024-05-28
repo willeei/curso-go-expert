@@ -10,10 +10,11 @@ type Product struct {
 	ID    int `gorm:"primaryKey"`
 	Name  string
 	Price float64
+	gorm.Model
 }
 
 func main() {
-	dsn := "root:9655@tcp(localhost:3306)/goexpert"
+	dsn := "root:9655@tcp(localhost:3306)/goexpert?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
@@ -31,9 +32,9 @@ func main() {
 	//db.Create(&products)
 
 	// read
-	//var product Product
-	//db.First(&product, 1)
-	//fmt.Println(product)
+	var product Product
+	db.First(&product, 17)
+	fmt.Println(product)
 
 	//db.First(&product, "name = ?", "Laptop")
 	//fmt.Println(product)
@@ -58,9 +59,22 @@ func main() {
 	//	fmt.Println(product)
 	//}
 
-	var products []Product
-	db.Where("name LIKE ?", "%key%").Find(&products)
-	for _, product := range products {
-		fmt.Println(product)
-	}
+	//var products []Product
+	//db.Where("name LIKE ?", "%key%").Find(&products)
+	//for _, product := range products {
+	//	fmt.Println(product)
+	//}
+
+	// update
+	//var product Product
+	//db.First(&product, 17)
+	//product.Name = "New Keyboard"
+	//db.Save(&product)
+	//
+	//var newKeyboard Product
+	//db.First(&newKeyboard, 17)
+	//fmt.Println(newKeyboard)
+
+	// delete
+	//db.Delete(&newKeyboard)
 }
