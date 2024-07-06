@@ -1,4 +1,4 @@
-module github.com/williamsbarriquero/curso-go/6-db/8
+module github.com/williamsbarriquero/curso-go/6-db/10
 
 go 1.22.3
 

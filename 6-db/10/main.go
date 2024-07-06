@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Category struct {
@@ -28,27 +28,14 @@ func main() {
 	}
 	db.AutoMigrate(&Product{}, &Category{})
 
-	//category := Category{Name: "Cozinha"}
-	//db.Create(&category)
-	//
-	//category2 := Category{Name: "Eletronics"}
-	//db.Create(&category2)
-	//
-	//db.Create(&Product{
-	//	Name:       "Panela",
-	//	Price:      100,
-	//	Categories: []Category{category, category2},
-	//})
-
-	var categories []Category
-	err = db.Model(&Category{}).Preload("Products").Find(&categories).Error
+	// lock pessimista
+	tx := db.Begin()
+	var c Category
+	err = tx.Debug().Clauses(clause.Locking{Strength: "UPDATE"}).First(&c, 1).Error
 	if err != nil {
 		panic(err)
 	}
-	for _, category := range categories {
-		fmt.Println(category.Name, ":")
-		for _, product := range category.Products {
-			fmt.Println(" - ", product.Name)
-		}
-	}
+	c.Name = "Updated Category"
+	tx.Debug().Save(&c)
+	tx.Commit()
 }
