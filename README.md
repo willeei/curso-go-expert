@@ -19,3 +19,7 @@ exec: `go test -bench=. -run=^# -count=10 -benchtime=3s` executa por três 3s
 
 Teste de mutação
 exec: `go test -fuzz=. -run=ˆ#`
+
+### Template Go Projects
+
+`https://github.com/golang-standards/project-layout`
