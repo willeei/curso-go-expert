@@ -22,7 +22,9 @@ func main() {
 		panic(err)
 	}
 	db.AutoMigrate(&entity.User{}, &entity.Product{})
+	productHandler := NewProductHandler(database.NewProduct(db))
 
+	http.HandleFunc("/products", productHandler.CreateProduct)
 	http.ListenAndServe(":8000", nil)
 }
 
