@@ -10,7 +10,7 @@ const productName = "Product 1"
 
 func TestNewProduct(t *testing.T) {
 	expectedProductName := productName
-	expectedProductPrice := 100
+	expectedProductPrice := 100.0
 
 	p, err := NewProduct(expectedProductName, expectedProductPrice)
 	assert.Nil(t, err)
