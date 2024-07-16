@@ -1,0 +1,16 @@
+basePath: /
+host: localhost:8000
+info:
+  contact:
+    email: willbrr.dev@gmail.com
+    name: Williams Barriquero
+    url: https://willbrr.dev.com
+  description: Product API with authentication
+  license:
+    name: MIT
+    url: http://mit.com
+  termsOfService: http://swagger.io/terms/
+  title: GoExpert API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

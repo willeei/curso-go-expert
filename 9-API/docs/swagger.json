@@ -1,0 +1,21 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Product API with authentication",
+        "title": "GoExpert API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Williams Barriquero",
+            "url": "https://willbrr.dev.com",
+            "email": "willbrr.dev@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "http://mit.com"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {}
+}

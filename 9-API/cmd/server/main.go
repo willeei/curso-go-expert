@@ -7,7 +7,9 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"github.com/willbrr.dev/goexpert/9-API/configs"
+	_ "github.com/willbrr.dev/goexpert/9-API/docs"
 	"github.com/willbrr.dev/goexpert/9-API/internal/entity"
 	"github.com/willbrr.dev/goexpert/9-API/internal/infra/database"
 	"github.com/willbrr.dev/goexpert/9-API/internal/infra/webserver/handlers"
@@ -15,6 +17,23 @@ import (
 	"gorm.io/gorm"
 )
 
+// @title GoExpert API
+// @version 1.0
+// @description Product API with authentication
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name Williams Barriquero
+// @contact.url https://willbrr.dev.com
+// @contact.email willbrr.dev@gmail.com
+
+// @license.name MIT
+// @license.url http://mit.com
+
+// @host localhost:8000
+// @BasePath /
+// @securityDefinitions.api_key ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	conf, err := configs.LoadConfig(".")
 	if err != nil {
@@ -49,6 +68,8 @@ func main() {
 
 	r.Post("/users", userHandler.Create)
 	r.Post("/users/generate_token", userHandler.Login)
+
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 
 	http.ListenAndServe(":8000", r)
 }
