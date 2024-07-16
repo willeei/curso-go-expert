@@ -16,7 +16,11 @@ type CreateUserInput struct {
 	Password string `json:"password"`
 }
 
-type LoginInput struct {
+type GetTokenInput struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
+}
+
+type GetTokenOutput struct {
+	AccessToken string `json:"access_token"`
 }

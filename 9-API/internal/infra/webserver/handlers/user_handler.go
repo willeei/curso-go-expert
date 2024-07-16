@@ -25,33 +25,47 @@ func NewUserHandler(db database.UserInterface) *UserHandler {
 	}
 }
 
-func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+// GetJwtToken godoc
+// @Summary     Get JWT token
+// @Description Get JWT token
+// @Tags        users
+// @Accept      json
+// @Produce     json
+// @Param       request body dto.GetTokenInput true "user credentials"
+// @Success     200 {object} dto.GetTokenOutput
+// @Failure     400 {object} Error
+// @Failure     401 {object} Error
+// @Failure     404 {object} Error
+// @Router      /users/generate_token [post]
+func (h *UserHandler) GetJwtToken(w http.ResponseWriter, r *http.Request) {
 	jwt := r.Context().Value("jwt").(*jwtauth.JWTAuth)
 	jwtExpiresIn := r.Context().Value("jwt_expires_in").(int)
-	var user dto.LoginInput
+	var user dto.GetTokenInput
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		error := Error{Message: "Invalid request body"}
+		json.NewEncoder(w).Encode(error)
 		return
 	}
 	u, err := h.UserDB.FindByEmail(user.Email)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+		w.WriteHeader(http.StatusNotFound)
+		error := Error{Message: "User not found"}
+		json.NewEncoder(w).Encode(error)
 		return
 	}
 	if !u.CheckPassword(user.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
+		error := Error{Message: err.Error()}
+		json.NewEncoder(w).Encode(error)
 		return
 	}
 	_, token, _ := jwt.Encode(map[string]interface{}{
 		"sub": u.ID.String(),
 		"exp": time.Now().Add(time.Second * time.Duration(jwtExpiresIn)).Unix(),
 	})
-	accessToken := struct {
-		AccessToken string `json:"access_token"`
-	}{
-		AccessToken: token,
-	}
+	accessToken := dto.GetTokenOutput{AccessToken: token}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(accessToken)
