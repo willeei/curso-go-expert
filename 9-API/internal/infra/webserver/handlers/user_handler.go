@@ -57,8 +57,6 @@ func (h *UserHandler) GetJwtToken(w http.ResponseWriter, r *http.Request) {
 	}
 	if !u.CheckPassword(user.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
-		error := Error{Message: err.Error()}
-		json.NewEncoder(w).Encode(error)
 		return
 	}
 	_, token, _ := jwt.Encode(map[string]interface{}{
