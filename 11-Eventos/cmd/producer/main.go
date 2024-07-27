@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/willbrr.dev/goexpert/11-Eventos/pkg/rabbitmq"
 )
@@ -18,15 +17,5 @@ func main() {
 		}
 	}(ch)
 
-	msgs := make(chan amqp.Delivery)
-
-	go rabbitmq.Consume(ch, msgs, "orders")
-
-	for msg := range msgs {
-		fmt.Println(string(msg.Body))
-		err := msg.Ack(false)
-		if err != nil {
-			panic(err)
-		}
-	}
+	rabbitmq.Publish(ch, "Hello, World!", "amq.direct")
 }
