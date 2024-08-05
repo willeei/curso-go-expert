@@ -1,4 +1,4 @@
-module github.com/willbrr.dev/goexpert/13-graphql
+module github.com/willbrr.dev/goexpert/13-GraphQL
 
 go 1.22.5
 

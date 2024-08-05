@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/willbrr.dev/goexpert/13-graphql/internal/database"
+import "github.com/willbrr.dev/goexpert/13-GraphQL/internal/database"
 
 // This file will not be regenerated automatically.
 //
@@ -8,4 +8,5 @@ import "github.com/willbrr.dev/goexpert/13-graphql/internal/database"
 
 type Resolver struct {
 	CategoryDB *database.Category
+	CourseDB   *database.Course
 }

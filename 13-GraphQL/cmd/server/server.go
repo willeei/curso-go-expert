@@ -2,7 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"github.com/willbrr.dev/goexpert/13-graphql/internal/database"
+	"github.com/willbrr.dev/goexpert/13-GraphQL/graph"
+	"github.com/willbrr.dev/goexpert/13-GraphQL/internal/database"
 	"log"
 	"net/http"
 	"os"
@@ -10,7 +11,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/willbrr.dev/goexpert/13-graphql/graph"
 )
 
 const defaultPort = "8080"
@@ -23,6 +23,7 @@ func main() {
 	defer db.Close()
 
 	categoryDb := database.NewCategory(db)
+	courseDb := database.NewCourse(db)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -31,6 +32,7 @@ func main() {
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		CategoryDB: categoryDb,
+		CourseDB:   courseDb,
 	}}))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
