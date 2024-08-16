@@ -5,12 +5,13 @@ package main
 
 import (
 	"database/sql"
-	"github.com/willbrrdev/clean-arch/internal/entity"
-	"github.com/willbrrdev/clean-arch/internal/event"
-	"github.com/willbrrdev/clean-arch/internal/infra/database"
-	"github.com/willbrrdev/clean-arch/internal/infra/web"
-	"github.com/willbrrdev/clean-arch/internal/usecase"
-	"github.com/willbrrdev/clean-arch/pkg/events"
+
+	"github.com/willbrrdev/challenge-clean-architecture/internal/entity"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/event"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/database"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/web"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/usecase"
+	"github.com/willbrrdev/challenge-clean-architecture/pkg/events"
 
 	"github.com/google/wire"
 )
@@ -41,6 +42,14 @@ func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInt
 	return &usecase.CreateOrderUseCase{}
 }
 
+func NewListOrdersUseCase(db *sql.DB) *usecase.ListOrdersUseCase {
+	wire.Build(
+		setOrderRepositoryDependency,
+		usecase.NewListOrdersUseCase,
+	)
+	return &usecase.ListOrdersUseCase{}
+}
+
 func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *web.WebOrderHandler {
 	wire.Build(
 		setOrderRepositoryDependency,
@@ -48,4 +57,12 @@ func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterf
 		web.NewWebOrderHandler,
 	)
 	return &web.WebOrderHandler{}
+}
+
+func NewWebListOrdersHandler(db *sql.DB) *web.WebListOrdersHandler {
+	wire.Build(
+		setOrderRepositoryDependency,
+		web.NewWebListOrdersHandler,
+	)
+	return &web.WebListOrdersHandler{}
 }

@@ -3,19 +3,20 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/willbrrdev/clean-arch/configs"
-	"github.com/willbrrdev/clean-arch/internal/event/handler"
-	"github.com/willbrrdev/clean-arch/internal/infra/graph"
-	"github.com/willbrrdev/clean-arch/internal/infra/grpc/pb"
-	"github.com/willbrrdev/clean-arch/internal/infra/grpc/service"
-	"github.com/willbrrdev/clean-arch/internal/infra/web/webserver"
-	"github.com/willbrrdev/clean-arch/pkg/events"
 	"net"
 	"net/http"
 
-	graphqlhandler "github.com/99designs/gqlgen/graphql/handler"
+	"github.com/willbrrdev/challenge-clean-architecture/configs"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/event/handler"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/graph"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/grpc/pb"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/grpc/service"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/web/webserver"
+	"github.com/willbrrdev/challenge-clean-architecture/pkg/events"
+
+	graphql_handler "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
@@ -24,12 +25,12 @@ import (
 )
 
 func main() {
-	cfg, err := configs.LoadConfig(".")
+	configs, err := configs.LoadConfig(".")
 	if err != nil {
 		panic(err)
 	}
 
-	db, err := sql.Open(cfg.DBDriver, fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", cfg.DBUser, cfg.DBPassword, cfg.DBHost, cfg.DBPort, cfg.DBName))
+	db, err := sql.Open(configs.DBDriver, fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", configs.DBUser, configs.DBPassword, configs.DBHost, configs.DBPort, configs.DBName))
 	if err != nil {
 		panic(err)
 	}
@@ -43,33 +44,38 @@ func main() {
 	})
 
 	createOrderUseCase := NewCreateOrderUseCase(db, eventDispatcher)
+	listOrdersUseCase := NewListOrdersUseCase(db)
 
-	webserver := webserver.NewWebServer(cfg.WebServerPort)
+	webserver := webserver.NewWebServer(configs.WebServerPort)
 	webOrderHandler := NewWebOrderHandler(db, eventDispatcher)
-	webserver.AddHandler("/order", webOrderHandler.Create)
-	fmt.Println("Starting web server on port", cfg.WebServerPort)
+	webListOrdersHandler := NewWebListOrdersHandler(db)
+
+	webserver.AddHandler("/order", webOrderHandler.Create, "POST")
+	webserver.AddHandler("/order", webListOrdersHandler.List, "GET")
+	fmt.Println("Starting web server on port", configs.WebServerPort)
 	go webserver.Start()
 
 	grpcServer := grpc.NewServer()
-	createOrderService := service.NewOrderService(*createOrderUseCase)
-	pb.RegisterOrderServiceServer(grpcServer, createOrderService)
+	orderService := service.NewOrderService(*createOrderUseCase, *listOrdersUseCase)
+	pb.RegisterOrderServiceServer(grpcServer, orderService)
 	reflection.Register(grpcServer)
 
-	fmt.Println("Starting gRPC server on port", cfg.GRPCServerPort)
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", cfg.GRPCServerPort))
+	fmt.Println("Starting gRPC server on port", configs.GRPCServerPort)
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", configs.GRPCServerPort))
 	if err != nil {
 		panic(err)
 	}
 	go grpcServer.Serve(lis)
 
-	srv := graphqlhandler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
+	srv := graphql_handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
 		CreateOrderUseCase: *createOrderUseCase,
+		ListOrdersUseCase:  *listOrdersUseCase,
 	}}))
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
 
-	fmt.Println("Starting GraphQL server on port", cfg.GraphQLServerPort)
-	http.ListenAndServe(":"+cfg.GraphQLServerPort, nil)
+	fmt.Println("Starting GraphQL server on port", configs.GraphQLServerPort)
+	http.ListenAndServe(":"+configs.GraphQLServerPort, nil)
 }
 
 func getRabbitMQChannel() *amqp.Channel {

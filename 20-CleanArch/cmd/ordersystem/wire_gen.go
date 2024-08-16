@@ -9,12 +9,16 @@ package main
 import (
 	"database/sql"
 	"github.com/google/wire"
-	"github.com/willbrrdev/clean-arch/internal/entity"
-	"github.com/willbrrdev/clean-arch/internal/event"
-	"github.com/willbrrdev/clean-arch/internal/infra/database"
-	"github.com/willbrrdev/clean-arch/internal/infra/web"
-	"github.com/willbrrdev/clean-arch/internal/usecase"
-	"github.com/willbrrdev/clean-arch/pkg/events"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/entity"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/event"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/database"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/infra/web"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/usecase"
+	"github.com/willbrrdev/challenge-clean-architecture/pkg/events"
+)
+
+import (
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Injectors from wire.go:
@@ -26,11 +30,23 @@ func NewCreateOrderUseCase(db *sql.DB, eventDispatcher events.EventDispatcherInt
 	return createOrderUseCase
 }
 
+func NewListOrdersUseCase(db *sql.DB) *usecase.ListOrdersUseCase {
+	orderRepository := database.NewOrderRepository(db)
+	listOrdersUseCase := usecase.NewListOrdersUseCase(orderRepository)
+	return listOrdersUseCase
+}
+
 func NewWebOrderHandler(db *sql.DB, eventDispatcher events.EventDispatcherInterface) *web.WebOrderHandler {
 	orderRepository := database.NewOrderRepository(db)
 	orderCreated := event.NewOrderCreated()
 	webOrderHandler := web.NewWebOrderHandler(eventDispatcher, orderRepository, orderCreated)
 	return webOrderHandler
+}
+
+func NewWebListOrdersHandler(db *sql.DB) *web.WebListOrdersHandler {
+	orderRepository := database.NewOrderRepository(db)
+	webListOrdersHandler := web.NewWebListOrdersHandler(orderRepository)
+	return webListOrdersHandler
 }
 
 // wire.go:

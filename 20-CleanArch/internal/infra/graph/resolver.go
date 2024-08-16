@@ -1,6 +1,6 @@
 package graph
 
-import "github.com/willbrrdev/clean-arch/internal/usecase"
+import "github.com/willbrrdev/challenge-clean-architecture/internal/usecase"
 
 // This file will not be regenerated automatically.
 //
@@ -8,4 +8,5 @@ import "github.com/willbrrdev/clean-arch/internal/usecase"
 
 type Resolver struct {
 	CreateOrderUseCase usecase.CreateOrderUseCase
+	ListOrdersUseCase  usecase.ListOrdersUseCase
 }

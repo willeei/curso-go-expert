@@ -1,4 +1,4 @@
-module challenge-cleanarch
+module github.com/willbrrdev/challenge-clean-architecture
 
 go 1.19
 

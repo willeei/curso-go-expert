@@ -3,10 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/streadway/amqp"
+	"github.com/willbrrdev/challenge-clean-architecture/pkg/events"
 	"sync"
-
-	amqp "github.com/rabbitmq/amqp091-go"
-	"github.com/willbrrdev/clean-arch/pkg/events"
 )
 
 type OrderCreatedHandler struct {

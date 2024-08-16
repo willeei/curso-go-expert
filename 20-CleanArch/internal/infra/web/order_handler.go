@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/willbrrdev/clean-arch/internal/entity"
-	"github.com/willbrrdev/clean-arch/internal/usecase"
-	"github.com/willbrrdev/clean-arch/pkg/events"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/entity"
+	"github.com/willbrrdev/challenge-clean-architecture/internal/usecase"
+	"github.com/willbrrdev/challenge-clean-architecture/pkg/events"
 )
 
 type WebOrderHandler struct {
