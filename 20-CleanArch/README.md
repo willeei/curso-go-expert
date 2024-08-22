@@ -12,14 +12,7 @@ Não esqueça de criar as migrações necessárias e o arquivo api.http com a re
 
 ### Execução
 
-1. Clone o repositório e acesse a subpasta do desafio:
-
-   ```bash
-   git clone https://github.com/mbombonato/pos-go-expert.git
-   cd pos-go-expert/challenge-clean-architecture
-   ```
-
-2. Instale as dependências:
+1. Instale as dependências:
 
    ```bash
    go install github.com/ktr0731/evans@latest
@@ -27,28 +20,29 @@ Não esqueça de criar as migrações necessárias e o arquivo api.http com a re
    go mod tidy
    ```
 
-3. Copie as variáveis de ambiente:
+2. Copie as variáveis de ambiente:
 
    ```bash
    cp .env.sample .env
    ```
 
-4. Execute o Mysql e RabbitMQ:
+3. Execute o Mysql e RabbitMQ:
 
    ```bash
    docker-compose up -d
    ```
 
-5. Execute as migrations:
+4. Execute as migrations:
 
    ```bash
    migrate -path=internal/infra/database/migrations -database "mysql://root:root@tcp(localhost:3306)/orders" -verbose up
    ```
 
-6. Execute os servidores:
+5. Execute os servidores:
 
+entre na pasta cm/ordersystem e execute o comando abaixo:
    ```bash
-   go run cmd/ordersystem/wire_gen.go cmd/ordersystem/main.go
+   go run wire_gen.go main.go
    ```
 
 ### Testando Endpoints

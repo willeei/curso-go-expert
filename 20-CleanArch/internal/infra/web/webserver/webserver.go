@@ -37,8 +37,8 @@ func (s *WebServer) AddHandler(path string, handler http.HandlerFunc, method str
 	}
 }
 
-// loop through the handlers and add them to the router
-// register middeleware logger
+// Start loop through the handlers and add them to the router
+// register middleware logger
 // start the server
 func (s *WebServer) Start() {
 	s.Router.Use(middleware.Logger)
