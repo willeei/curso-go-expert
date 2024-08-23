@@ -1,21 +1,54 @@
 version: '3.7'
 
 services:
+#  app:
+#    build:
+#      context: .
+#    networks:
+#      - clean-arch
+#    container_name: app
+#    depends_on:
+#      - mysql
+#    links:
+#      - mysql
   mysql:
+    platform: linux/amd64/v8
     image: mysql:5.7
+    networks:
+      - clean-arch
     container_name: mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: orders
-      MYSQL_PASSWORD: root
     ports:
       - 3306:3306
     volumes:
       - .docker/mysql:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+  migrate:
+    platform: linux/amd64/v8
+    image: migrate/migrate
+    networks:
+      - clean-arch
+    container_name: migrate
+    restart: "on-failure"
+    volumes:
+      - ./internal/infra/database/migrations:/migrations
+    command: [ "-path", "/migrations", "-database", "mysql://root:root@tcp(mysql:3306)/orders", "-verbose", "up"]
+    depends_on:
+      - mysql
+    links:
+      - mysql
 
   rabbitmq:
     image: rabbitmq:3-management
+    networks:
+      - clean-arch
     container_name: rabbitmq
     restart: always
     ports:
@@ -24,3 +57,6 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+
+networks:
+  clean-arch:
